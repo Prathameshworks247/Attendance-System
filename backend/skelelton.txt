@@ -1,0 +1,37 @@
+backend/
+│
+├── src/
+│   ├── app.js              # Express app setup
+│   ├── server.js           # HTTP + WebSocket startup
+│   │
+│   ├── config/
+│   │   ├── db.js           # MongoDB connection
+│   │   └── env.js          # environment variables
+│   │
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Class.js
+│   │   └── Attendance.js
+│   │
+│   ├── routes/
+│   │   ├── auth.routes.js
+│   │   ├── class.routes.js
+│   │   └── attendance.routes.js
+│   │
+│   ├── middlewares/
+│   │   ├── auth.middleware.js
+│   │   └── role.middleware.js
+│   │
+│   ├── websocket/
+│   │   └── ws.server.js
+│   │
+│   ├── validators/
+│   │   └── *.schema.js     # Zod schemas
+│   │
+│   └── utils/
+│       ├── jwt.js
+│       └── response.js
+│
+├── package.json
+├── .env
+└── README.md
