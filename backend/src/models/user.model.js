@@ -21,11 +21,12 @@ const UserSchema = new Schema({
     },
     role:{
         type: String,
+        enum: ['student', 'teacher'],
         required: true
     }
 })
 
 
-const UserModel = mongoose.model('UserModel', UserSchema)
+const UserModel = mongoose.model('User', UserSchema)
 
 export default UserModel;
