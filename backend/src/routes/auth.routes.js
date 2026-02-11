@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import { signUpSchema, loginSchema } from "../validators/schema.js";
 import dotenv from "dotenv";
-
+import authMiddleware from "../middlewares/auth.middleware.js";
 const router = express.Router();
 dotenv.config();
 
@@ -104,5 +104,32 @@ router.post("/login", async (req, res) => {
     });
   }
 });
+
+
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select(
+      "_id name email role"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
+  }
+});
+
 
 export default router;
