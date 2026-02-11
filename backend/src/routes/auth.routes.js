@@ -1,34 +1,108 @@
-import express from 'express';
-import jwt from 'jsonwebtoken'
-import bodyParser from 'body-parser';
+import express from "express";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import User from "../models/user.model.js";
+import { signUpSchema, loginSchema } from "../validators/schema.js";
+import dotenv from "dotenv";
 
-const router  = express.Router();
+const router = express.Router();
+dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || ''
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET not set");
+}
 
-router.get('/login', (req,res)=>{
-    const {username, password} = req.body;
-    const user = user.find(u=> u.username === username && u.password === password)
-    if (!user){
-        return Response.json(
-                { success: false, message: "User not found" },
-                { status: 404 }
-            );
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, email, password, role } = signUpSchema.parse(req.body);
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: "Email already exists"
+      });
     }
 
-    const payload = {
-        id : user.id,
-        username : user.username,
-        role : user.role
-    };
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const token = jwt.sign(payload, JWT_SECRET, {expiresIn: '4h'});
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role
+    });
 
-    return new Response(JSON.stringify({ success: true, message: "User authenticated succesfully!!!" }), { status: 201 });
-})
-router.get('/signup', (req,res)=>{
-    res.send("Login Please")
-})
+    return res.status(201).json({
+      success: true,
+      messsage:"user created successfully",
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
 
+  } catch (error) {
+    if (error.name === "ZodError") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid request schema"
+      });
+    }
+    console.error("AUTH ERROR 👉", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error"
+    });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = loginSchema.parse(req.body);
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid email or password"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid email or password"
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "4h" }
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: { token }
+    });
+
+  } catch (error) {
+    if (error.name === "ZodError") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid request schema"
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error"
+    });
+  }
+});
 
 export default router;

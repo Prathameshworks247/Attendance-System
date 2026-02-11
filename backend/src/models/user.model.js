@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { _nativeEnum } from "zod/v4/core";
 
 const {Schema} = mongoose;
 
@@ -6,9 +7,8 @@ const UserSchema = new Schema({
     
     name : {
         type: String,
-        required: true,
-        unique: [true, "username already in use"]
-    },
+        required: true
+        },
     email : {
         type: String,
         required: true,

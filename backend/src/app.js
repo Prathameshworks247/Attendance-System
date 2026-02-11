@@ -1,16 +1,10 @@
 import express from "express";
 const app = express();
 
+//globla middlewares
 
-app.get("/", (req, res) => {
-  res.send("Hello World!")
-});
+app.use(express.json()); //parse json body 
+app.use(cors());
 
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    data: "OK",
-  });
-});
 
 export default app;
