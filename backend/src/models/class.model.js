@@ -5,7 +5,8 @@ import { Schema } from "mongoose";
 const ClassSchema  = new Schema({
     className: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     teacherId: {
         type: Schema.Types.ObjectId,
@@ -18,4 +19,4 @@ const ClassSchema  = new Schema({
     }]
 }, {timestamps:true});
 
-export default mongoose.model('Class', ClassSchema);
+export default mongoose.model('ClassData', ClassSchema);

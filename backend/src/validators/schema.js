@@ -30,3 +30,7 @@ export const signUpSchema = z.object({
     errorMap: () => ({ message: "Role must be either student or teacher" }),
   }),
 });
+
+export const classSchema = z.object({
+  className: z.string()
+});
