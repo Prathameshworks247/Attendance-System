@@ -88,6 +88,50 @@ router.post('/:id/add-student',authMiddleware,roleMiddleware("teacher"), async (
     }
 })
 
+router.get('/:id',authMiddleware, async (req,res)=>{
+    try{
+        const classId = req.params.id;
+        const classData = await ClassData.findById(classId).populate("studentIds", "name email");
+        if (!classData){
+            return res.status(404).json({
+                success:false,
+                error: "Class not found."
+            })
+        }
+        const isOwner = classData.teacherId.toString() === req.user.userId;
+        const isEnrolled = classData.studentIds.some(s => s._id.toString() === req.user.userId);
+        if (!isOwner && !isEnrolled){
+            return res.status(403).json({
+                success:false,
+                error: "Forbidden, not class teacher or student"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            data: {
+                _id: classData._id,
+                className: classData.className,
+                teacherId: classData.teacherId,
+                students: classData.studentIds
+            }
+        })}
+    catch (error) {
+        if (error.name === "CastError"){
+            return res.status(404).json({
+                success:false,
+                error: "Class not found."
+            })
+        }
+        res.status(500).json({
+            success:false,
+            error: "Internal Server Error"
+        })
+    }
+})
+
+
+    
+
 
 
 export default router;

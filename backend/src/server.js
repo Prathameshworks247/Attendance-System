@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import dbConnect from "./config/dbConnect.js";
 import authRoutes from "./routes/auth.routes.js";
 import classRoutes from "./routes/class.routes.js"
+import studentRoutes from "./routes/student.routes.js"
+import attendanceRoutes from "./routes/attendance.routes.js"
+
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -23,6 +26,8 @@ const startServer = (async () => {
     });
     app.use("/auth", authRoutes);
     app.use("/class", classRoutes);
+    app.use("/students", studentRoutes);
+    app.use("/attendance", attendanceRoutes);
 
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);

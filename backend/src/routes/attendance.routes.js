@@ -1,21 +1,8 @@
-import mongoose from "mongoose";
+import express from 'express';
+import User from '../models/user.model.js';
+import dotenv from 'dotenv';
+import roleMiddleware from '../middlewares/roles.middleware.js'
+import authMiddleware from '../middlewares/auth.middleware.js';
+dotenv.config()
 
-import { Schema } from "mongoose";
-
-const ClassSchema  = new Schema({
-    className: {
-        type: String,
-        required: true
-    },
-    teacherId: {
-        type: Schema.Types.ObjectId,
-        ref: 'UserModel',
-        required: true
-    },
-    studentIds: [{
-        type: Schema.Types.ObjectId,
-        ref : 'UserModel'
-    }]
-}, {timestamps:true});
-
-export default mongoose.model('Class', ClassSchema);
+const router = express.Router()

@@ -15,8 +15,8 @@ Backend + WebSocket live attendance. Tracking progress against the spec.
 | 3 | `GET /auth/me` | any | ✅ | tested |
 | 4 | `POST /class` | teacher | ✅ | tested: 201 / 401 / 403 / bad schema — **missing `_id` in response** |
 | 5 | `POST /class/:id/add-student` | teacher owner | ✅ | tested: 200 / dup / role / non-owner / 404 |
-| 6 | `GET /class/:id` | teacher-owner or enrolled student | ⬜ | populate `students` with name/email |
-| 7 | `GET /students` | teacher | ⬜ | all users with role student |
+| 6 | `GET /class/:id` | teacher-owner or enrolled student | ✅ | tested: owner/enrolled/unenrolled/404/malformed id |
+| 7 | `GET /students` | teacher | ✅ | tested: 401/403/200 — fixed missing `User` import & bad `roleMiddleware(array)` call |
 | 8 | `GET /class/:id/my-attendance` | enrolled student | ⬜ | read Attendance collection, status or null |
 | 9 | `POST /attendance/start` | teacher owner | ⬜ | sets `activeSession` in memory |
 
